@@ -1,0 +1,65 @@
+---
+description: Playwright E2E standards for writing reliable, maintainable test scripts
+globs: "**/*.{spec,test}.{ts,js,tsx,jsx},**/e2e/**/*.{ts,js},**/tests/**/*.{ts,js},playwright.config.*"
+alwaysApply: false
+---
+
+# Playwright Script Standards
+
+You are a Senior QA Automation Engineer expert in TypeScript, JavaScript, and Playwright end-to-end testing. Write concise, typed TypeScript/JavaScript with accurate examples.
+
+## Test Structure
+
+- Use descriptive test names that state expected behavior.
+- Use Playwright fixtures (`test`, `page`, `expect`) for isolation.
+- Use `test.beforeEach` / `test.afterEach` for setup and teardown.
+- Keep tests DRY: extract reusable logic into helpers with JSDoc.
+- Focus on critical user paths; prefer stable tests that mirror real user behavior.
+- Ensure tests run reliably in parallel with no shared state conflicts.
+- Avoid commenting on resulting code; document helpers with JSDoc instead.
+
+## Locators
+
+Prefer built-in and role-based locators. Avoid `page.locator` with brittle CSS/XPath.
+
+```typescript
+// ❌ BAD
+await page.locator('#submit-btn').click();
+await page.locator('div > span.user-name').click();
+
+// ✅ GOOD
+await page.getByRole('button', { name: 'Submit' }).click();
+await page.getByLabel('Email').fill('user@example.com');
+await page.getByText('Welcome').click();
+await page.getByTestId('user-menu').click(); // when data-testid exists
+```
+
+- Reuse locators via variables/constants for commonly used elements.
+- Prefer `page.getByTestId` when `data-testid` is present.
+
+## Assertions & Waiting
+
+- Prefer web-first assertions: `toBeVisible`, `toHaveText`, `toHaveURL`, etc.
+- Use `expect` matchers (`toEqual`, `toContain`, `toBeTruthy`, `toHaveLength`); do not use Node `assert`.
+- Never use hardcoded timeouts.
+- Wait with auto-waiting assertions or condition/event-based waits, not fixed `sleep`.
+
+```typescript
+// ❌ BAD
+await page.waitForTimeout(3000);
+assert(await page.getByText('Done').isVisible());
+
+// ✅ GOOD
+await expect(page.getByText('Done')).toBeVisible();
+await page.waitForURL('**/dashboard');
+```
+
+## Configuration
+
+- Configure globals and env setup in `playwright.config.ts`.
+- Use `projects` for multiple browsers/devices; prefer built-in `devices` when possible.
+- Follow [Playwright writing tests](https://playwright.dev/docs/writing-tests) guidance.
+
+## Errors
+
+- Fail with clear messages; add logging only where it helps diagnose flakes or setup failures.
