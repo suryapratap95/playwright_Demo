@@ -19,7 +19,7 @@
 
 End-to-end happy path for:
 
-**Products page → Silver Plan → Add to Cart → (default Monthly) → Apply veteran coupon (`VETFREE`) → Create new account → Stripe payment → Order ID confirmation**
+**Products page → Silver Plan → Add to Cart → (default Monthly) → Apply veteran coupon (`veteran`) → Create new account → Stripe payment → Order ID confirmation**
 
 Out of scope for this document: negative / edge cases (invalid card, duplicate email, empty required fields, Gold plan, device SKUs).
 
@@ -45,7 +45,7 @@ Out of scope for this document: negative / edge cases (invalid card, duplicate e
 | TD-03 | Renewal subscription | **Monthly Plan - $9.99** (keep default; do not change) |
 | TD-04 | Quantity | 1 (default) |
 | TD-05 | Feature list | Keep **default** Silver feature list (do not change) |
-| TD-06 | Promo / veteran coupon | `VETFREE` |
+| TD-06 | Promo / veteran coupon | `veteran` (note: `VETFREE` is **not** applicable for Silver Plan) |
 | TD-07 | Account | **New account** every run |
 | TD-08 | Email | Unique per run (e.g. `qa.silver.<timestamp>@example.com`) — no extra format validation beyond uniqueness |
 | TD-09 | First Name | *Provide valid test value* |
@@ -173,7 +173,7 @@ Also visible in flow context: includes family member passes (e.g. **Includes 4 F
 
 ---
 
-### TC-SP-005 — Apply veteran promotional code `VETFREE`
+### TC-SP-005 — Apply veteran promotional code `veteran`
 
 | Item | Detail |
 | --- | --- |
@@ -183,12 +183,13 @@ Also visible in flow context: includes family member passes (e.g. **Includes 4 F
 **Steps**
 
 1. On Shopping Cart / Order Summary, locate **Promotional Code** field (`Enter promo code`).
-2. Enter `VETFREE`.
+2. Enter `veteran`.
 3. Click **Apply**.
+4. Do **not** use `VETFREE` for Silver Plan (not applicable).
 
 **Expected Result**
 
-- Promo applies successfully.
+- Promo `veteran` applies successfully for Silver Plan.
 - UI shows success indication (e.g. **Promo Applied**).
 - Order summary updates according to promo rules (discount / shipping / free messaging as implemented on staging).
 - **Proceed to checkout** remains available.
@@ -308,7 +309,7 @@ Also visible in flow context: includes family member passes (e.g. **Includes 4 F
 
 **Steps**
 
-1. Review Order Summary (Silver, Monthly default, `VETFREE` applied, totals as shown).
+1. Review Order Summary (Silver, Monthly default, `veteran` applied, totals as shown).
 2. Click **Submit Order**.
 3. Wait for payment processing to complete.
 4. Capture confirmation details.
@@ -333,7 +334,7 @@ Use this as a condensed execution checklist covering TC-SP-001 → TC-SP-010.
 | 2 | Click **Silver Plan** | Silver selected; default features unchanged |
 | 3 | Click **Add to Cart** | Item in cart; cart count updates |
 | 4 | Open cart | Silver membership + **Monthly Plan - $9.99** default |
-| 5 | Apply promo `VETFREE` | **Promo Applied** |
+| 5 | Apply promo `veteran` | **Promo Applied** |
 | 6 | Click **Proceed to checkout** | Checkout / account + shipping + payment sections available |
 | 7 | Create **new** account (unique email); no OTP | Account fields accepted |
 | 8 | Enter valid US shipping (and billing) | Address accepted |
@@ -356,7 +357,7 @@ medical-alert-products
         ▼
  ecommerce/cart
    • Verify Monthly Plan - $9.99 (default)
-   • Apply VETFREE
+   • Apply veteran
    • Proceed to checkout
         │
         ▼
@@ -385,7 +386,7 @@ These were not fully specified by stakeholders; fill before scripting:
 | OI-03 | Exact **Name on Card** value | Payment step |
 | OI-04 | If **Register as Care Recipient or Member** modal appears, which option for happy path? | May block Submit Order |
 | OI-05 | Exact post-payment confirmation URL / Order ID label text | Assertion wording |
-| OI-06 | Exact monetary effect of `VETFREE` on Order Summary (beyond “Promo Applied”) | Promo assertion detail |
+| OI-06 | Exact monetary effect of `veteran` on Order Summary (beyond “Promo Applied”) | Promo assertion detail |
 
 ---
 
